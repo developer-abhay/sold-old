@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
+import AuthModal from "../auth/Login";
 
 const FinalPrice: React.FC<any> = () => {
   return (
@@ -21,9 +22,7 @@ const FinalPrice: React.FC<any> = () => {
 
           <h5 className="text-2xl text-red-500 font-semibold">₹ 40,220</h5>
 
-          <Button className="mt-4 mb-2 w-[25%] bg-green-500 text-white hover:bg-green-400 font-semibold text-lg disabled:bg-gray-400 mx-auto">
-            Sell
-          </Button>
+          <AuthModal text={"Sell"} />
         </div>
       </div>
     </div>

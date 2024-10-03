@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import AuthModal from "./auth/Login";
 
 const Navbar: React.FC = () => {
   return (
@@ -22,9 +23,7 @@ const Navbar: React.FC = () => {
           <Search className="hidden sm:block absolute top-2 right-2" />
         </div>
 
-        <Button className="bg-amber-300 text-black hover:bg-amber-400 w-16 sm:w-32 rounded-lg text-base">
-          Login
-        </Button>
+        <AuthModal text={"Login"} />
       </div>
     </header>
   );

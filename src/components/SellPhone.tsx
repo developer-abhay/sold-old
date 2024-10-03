@@ -23,7 +23,10 @@ const SellPhone: React.FC = () => {
   return (
     <div className="py-8 border-b w-full">
       {!moreBrands && !selectBrand && !selectSeries ? (
-        <ChooseBrand setSelectBrand={setSelectBrand} />
+        <ChooseBrand
+          setMoreBrands={setMoreBrands}
+          setSelectBrand={setSelectBrand}
+        />
       ) : (
         moreBrands &&
         !selectBrand && (
