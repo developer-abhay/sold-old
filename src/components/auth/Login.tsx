@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { registerUser, sendOTP, verifyOTP } from "@/api/auth";
+import { registerUser, sendOTP, verifyOTP } from "@/utils/user.auth";
 import SpinLoader from "../SpinLoader";
 
 const AuthModal: React.FC<any> = ({ text }) => {
