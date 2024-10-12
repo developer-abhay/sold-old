@@ -1,4 +1,3 @@
-import Bottom from "@/components/Bottom";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";

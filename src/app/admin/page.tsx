@@ -1,8 +1,7 @@
-// components/AdminLogin.tsx
-"use client"; // This component needs to be a Client Component
+"use client";
 
 import { useState } from "react";
-import { sendAdminOTP, verifyAdminOTP } from "@/utils/admin.auth"; // Assuming these functions are in utils/api.js
+import { sendAdminOTP, verifyAdminOTP } from "@/utils/admin.auth";
 import { useRouter } from "next/navigation";
 
 const AdminLogin = () => {
@@ -36,8 +35,6 @@ const AdminLogin = () => {
     try {
       const response = await verifyAdminOTP(mobileNumber, otp);
       if (response.success) {
-        console.log(response);
-        // Redirect to admin dashboard after successful verification
         router.push("/admin/dashboard");
       } else {
         setError("Invalid OTP.");

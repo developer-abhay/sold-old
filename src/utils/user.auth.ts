@@ -71,7 +71,7 @@ async function registerUser(
     body: JSON.stringify({
       email,
       password,
-      mobileNumber,
+      mobileNumber: `+x91${mobileNumber}`,
       name,
       address: {
         blockOrStreet: address.blockOrStreet,

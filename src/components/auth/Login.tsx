@@ -111,7 +111,11 @@ const AuthModal: React.FC<any> = ({ text }) => {
           </div>
           <div className=" w-1/2">
             <Dialog.Title className="text-2xl font-semibold">
-              {step === 1 ? "Enter Phone Number" : "Enter OTP"}
+              {step === 1
+                ? "Enter Phone Number"
+                : step === 2
+                ? "Enter OTP"
+                : "Register"}
             </Dialog.Title>
 
             <form
