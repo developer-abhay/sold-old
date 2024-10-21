@@ -1,73 +1,70 @@
-import Image from "next/image";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { fetchPhoneById } from "@/utils/fetchData";
 
 const ChooseVariant: React.FC<any> = ({
+  selectModel,
   selectVariant,
   setSelectVariant,
+  setSelectPhone,
+  allVariants,
+  setAllVariants,
   setExactValueButtonClicked,
 }: any) => {
-  return (
+  const [loading, setLoading] = useState(true);
+
+  const getPhoneDetails = async () => {
+    const data = await fetchPhoneById(selectModel._id);
+    setLoading(false);
+    setAllVariants(data.variantPrices);
+    setSelectPhone(data);
+  };
+
+  useEffect(() => {
+    getPhoneDetails();
+  }, []);
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <div className="mx-auto max-w-7xl w-full px-2 2xl:px-0">
-      <h3 className="text-2xl font-semibold my-4">Sell Your iPhone 13</h3>
+      <h3 className="text-2xl font-semibold my-4">
+        Sell Your {selectModel.name}
+      </h3>
       <div className="w-full mx-auto max-w-7xl border-2 shadow-md rounded-lg py-3">
         <div className="flex flex-col items-center justify-center px-3 sm:px-0">
-          <h4 className="text-lg font-semibold">Apple iPhone 13</h4>
-          <Image
-            src={"/iphone13.svg"}
-            alt="iphone 13"
-            width={250}
-            height={250}
-          />
+          <h4 className="text-lg font-semibold">{selectModel.name}</h4>
+          <div className="h-64 p-4 flex justify-center items-center">
+            <img
+              src={selectModel.thumbnail}
+              alt={selectModel.name}
+              className="border border-solid object-contain h-full"
+            />
+          </div>
           <p>Choose a Variant</p>
 
           <div className="mx-auto bg-black border-[0.8px] border-black rounded-full w-full sm:w-[40%] my-2" />
 
-          <div className="w-full sm:w-[40%] flex items-center gap-2">
-            <Button
-              className={cn(
-                "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-full transition-all shadow-md",
-                {
-                  "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                    selectVariant === "128 GB",
-                }
-              )}
-              onClick={() => {
-                setSelectVariant("128 GB");
-              }}
-            >
-              128 GB
-            </Button>
-
-            <Button
-              className={cn(
-                "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-full transition-all shadow-md",
-                {
-                  "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                    selectVariant === "256 GB",
-                }
-              )}
-              onClick={() => {
-                setSelectVariant("256 GB");
-              }}
-            >
-              256 GB
-            </Button>
-
-            <Button
-              className={cn(
-                "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-full transition-all shadow-md",
-                {
-                  "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                    selectVariant === "512 GB",
-                }
-              )}
-              onClick={() => {
-                setSelectVariant("512 GB");
-              }}
-            >
-              512 GB
-            </Button>
+          <div className="w-full sm:w-[40%] flex flex-col items-center gap-2 my-4">
+            {allVariants?.map((item: any) => {
+              return (
+                <Button
+                  key={item._id}
+                  className={cn(
+                    "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-full transition-all shadow-md",
+                    {
+                      "bg-amber-400 border-amber-400 hover:bg-amber-400":
+                        item.variantName == selectVariant.variantName,
+                    }
+                  )}
+                  onClick={() => {
+                    setSelectVariant(item);
+                  }}
+                >
+                  {item.variantName}
+                </Button>
+              );
+            })}
           </div>
 
           <Button

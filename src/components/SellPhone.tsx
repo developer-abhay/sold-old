@@ -12,21 +12,26 @@ import { getBrands } from "@/utils/fetchData";
 const SellPhone: React.FC = () => {
   const [moreBrands, setMoreBrands] = useState(false);
   const [selectBrand, setSelectBrand] = useState("");
-  const [exactValueButtonClicked, setExactValueButtonClicked] = useState(false);
+  const [selectModel, setSelectModel] = useState("");
   const [selectVariant, setSelectVariant] = useState("");
+  const [selectPhone, setSelectPhone] = useState("");
+
+  const [exactValueButtonClicked, setExactValueButtonClicked] = useState(false);
 
   const [accessoriesButtonClicked, setAccessoriesButtonClicked] =
     useState(false);
 
-  const [selectModels, setSelectModels] = useState("");
-
   // All brands
-  const [brands, SetBrands] = useState([]);
+  const [allBrands, SetAllBrands] = useState([]);
+  const [allVariants, setAllVariants] = useState("");
 
   const getAllBrands = async () => {
     const data = await getBrands();
-    SetBrands(data);
+    SetAllBrands(data);
   };
+
+  // Final answers array
+  const [deductionAnswers, setDeductionAnswers] = useState([] as number[]);
 
   useEffect(() => {
     getAllBrands();
@@ -36,41 +41,55 @@ const SellPhone: React.FC = () => {
     <div className="py-8 border-b w-full">
       {!moreBrands && !selectBrand ? (
         <ChooseBrand
-          brands={brands}
+          brands={allBrands}
           setMoreBrands={setMoreBrands}
           setSelectBrand={setSelectBrand}
         />
       ) : (
         moreBrands &&
         !selectBrand && (
-          <MoreBrands brands={brands} setSelectBrand={setSelectBrand} />
+          <MoreBrands brands={allBrands} setSelectBrand={setSelectBrand} />
         )
       )}
 
-      {selectBrand && !selectModels && (
+      {selectBrand && !selectModel && (
         <ChooseModel
-          setSelectModels={setSelectModels}
           selectBrand={selectBrand}
+          setSelectModel={setSelectModel}
         />
       )}
 
-      {selectModels && !exactValueButtonClicked && (
+      {selectModel && !exactValueButtonClicked && (
         <ChooseVariant
+          selectModel={selectModel}
           selectVariant={selectVariant}
           setSelectVariant={setSelectVariant}
+          setSelectPhone={setSelectPhone}
+          allVariants={allVariants}
+          setAllVariants={setAllVariants}
           setExactValueButtonClicked={setExactValueButtonClicked}
         />
       )}
 
       {exactValueButtonClicked && !accessoriesButtonClicked && (
         <Deductions
+          selectModel={selectModel}
           selectVariant={selectVariant}
+          selectPhone={selectPhone}
           accessoriesButtonClicked={accessoriesButtonClicked}
           setAccessoriesButtonClicked={setAccessoriesButtonClicked}
+          deductionAnswers={deductionAnswers}
+          setDeductionAnswers={setDeductionAnswers}
         />
       )}
 
-      {accessoriesButtonClicked && <FinalPrice />}
+      {accessoriesButtonClicked && (
+        <FinalPrice
+          selectPhone={selectPhone}
+          deductionAnswers={deductionAnswers}
+          selectVariant={selectVariant}
+        />
+      )}
     </div>
   );
 };

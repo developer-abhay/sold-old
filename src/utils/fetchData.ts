@@ -1,25 +1,3 @@
-// Get All phones and its details
-async function fetchAvailablePhones(searchQuery = "", lastId = "") {
-  const params = new URLSearchParams();
-
-  if (searchQuery) {
-    params.append("q", searchQuery);
-  } else if (lastId) {
-    params.append("lastId", lastId);
-  }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone`
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch available phones");
-  }
-
-  const { success, message, data } = await response.json();
-  return data.sellablePhones;
-}
-
 // Get all brand names
 async function getBrands() {
   const response = await fetch(
@@ -36,9 +14,6 @@ async function getBrands() {
 
 // Get all models of a brand
 async function getModels(brandName: string) {
-  console.log(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/brands/${brandName}`
-  );
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/brands/${brandName}`
   );
@@ -54,7 +29,9 @@ async function getModels(brandName: string) {
 
 // Get phone details by ID
 async function fetchPhoneById(phoneId: string) {
-  const response = await fetch(`/sellable-phone/${phoneId}`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/${phoneId}`
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch phone details");
@@ -64,4 +41,47 @@ async function fetchPhoneById(phoneId: string) {
   return data.data.sellablePhone; // Return the phone details
 }
 
-export { fetchAvailablePhones, fetchPhoneById, getBrands, getModels };
+//Fetch best price
+async function calculateBestPrice(
+  phoneId: any,
+  deductionConditions: any,
+  variantId = null
+) {
+  console.log(deductionConditions);
+  try {
+    // Create the payload with the required conditions and variantId (if applicable)
+    const payload: any = {
+      deductionConditions, // Array of 26 boolean values
+    };
+
+    if (variantId) {
+      payload.variantId = variantId; // Add variantId if the phone has variants
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/${phoneId}/exact-price`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // Send the payload as JSON in the request body
+      }
+    );
+
+    // Handle response
+    if (response.ok) {
+      const { success, message, data } = await response.json();
+
+      return data.exactPrice; // Return the exact price from the response data
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error calculating exact price");
+    }
+  } catch (error: any) {
+    console.error("Failed to fetch exact price:", error.message);
+    throw error; // Optionally rethrow the error to handle it further
+  }
+}
+
+export { getBrands, getModels, fetchPhoneById, calculateBestPrice };

@@ -1,33 +1,35 @@
 import { DEVICE_INFO } from "@/constants/deductions";
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
 const Deductions: React.FC<any> = ({
+  selectModel,
   selectVariant,
+  selectPhone,
   accessoriesButtonClicked,
   setAccessoriesButtonClicked,
+  deductionAnswers,
+  setDeductionAnswers,
 }: any) => {
-  const [normalConditionAnswers, setNormalConditionAnswers] = useState(
-    [] as boolean[]
-  );
   const [normalConditionButtonClicked, setNormalConditionButtonClicked] =
     useState(false);
-  const [physicalConditionAnswers, setPhysicalConditionAnswers] = useState(
-    [] as string[]
-  );
   const [physicalConditionButtonClicked, setPhysicalConditionButtonClicked] =
     useState(false);
-  const [functionalConditionAnswers, setFunctionalConditionAnswers] = useState(
-    [] as string[]
-  );
   const [
     functionalConditionButtonClicked,
     setFunctionalConditionButtonClicked,
   ] = useState(false);
 
-  const [accessoriesAnswers, setAccessoriesAnswers] = useState([] as string[]);
+  useEffect(() => {
+    const array = Array(26).fill(0);
+    setDeductionAnswers(array);
+  }, []);
+
+  useEffect(() => {
+    console.log(deductionAnswers);
+  }, [deductionAnswers]);
+
   return (
     <div
       className={cn(
@@ -39,9 +41,15 @@ const Deductions: React.FC<any> = ({
       )}
     >
       <div className="h-full flex flex-col items-center justify-center w-full md:w-[35%] border-2 rounded-lg">
-        <Image src="/iphone13.svg" alt="iphone 13" width={250} height={250} />
-        <p className="text-xl font-semibold">Apple iPhone 13</p>
-        <p className="text-sm">( 4 GB/{selectVariant})</p>
+        <div className="h-[250px] p-2">
+          <img
+            src={selectPhone.thumbnail}
+            alt={selectPhone.name}
+            className="h-full object-contain"
+          />
+        </div>
+        <p className="text-xl font-semibold">{selectModel.name}</p>
+        <p className="text-sm">{selectVariant.vriantName}</p>
         <div className="my-2 mx-auto bg-black border-[0.8px] border-black rounded-full w-[80%]" />
         <p className="text-sm pb-3 md:pb-0">Device Evaluation</p>
       </div>
@@ -65,13 +73,13 @@ const Deductions: React.FC<any> = ({
                       "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[12rem] transition-all shadow-md",
                       {
                         "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                          normalConditionAnswers[i],
+                          deductionAnswers[i],
                       }
                     )}
                     onClick={() => {
-                      setNormalConditionAnswers((prev) => {
+                      setDeductionAnswers((prev: any) => {
                         const newAnswers = [...prev];
-                        newAnswers[i] = true;
+                        newAnswers[i] = 1;
                         return newAnswers;
                       });
                     }}
@@ -84,13 +92,13 @@ const Deductions: React.FC<any> = ({
                       "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[12rem] transition-all shadow-md",
                       {
                         "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                          !normalConditionAnswers[i],
+                          !deductionAnswers[i],
                       }
                     )}
                     onClick={() => {
-                      setNormalConditionAnswers((prev) => {
+                      setDeductionAnswers((prev: any) => {
                         const newAnswers = [...prev];
-                        newAnswers[i] = false;
+                        newAnswers[i] = 0;
                         return newAnswers;
                       });
                     }}
@@ -103,7 +111,6 @@ const Deductions: React.FC<any> = ({
 
             <Button
               className="mt-4 md:w-[25%] bg-green-500 text-white hover:bg-green-400 font-semibold text-lg disabled:bg-gray-400 mx-auto"
-              disabled={normalConditionAnswers.includes(undefined as never)}
               onClick={() => {
                 setNormalConditionButtonClicked(true);
               }}
@@ -131,16 +138,16 @@ const Deductions: React.FC<any> = ({
                     "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[20rem] transition-all shadow-md",
                     {
                       "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                        physicalConditionAnswers[i],
+                        deductionAnswers[i + 3],
                     }
                   )}
                   onClick={() => {
-                    setPhysicalConditionAnswers((prev) => {
+                    setDeductionAnswers((prev: any) => {
                       const newAnswers = [...prev];
-                      if (newAnswers[i]) {
-                        newAnswers[i] = "";
+                      if (newAnswers[i + 3]) {
+                        newAnswers[i + 3] = 0;
                       } else {
-                        newAnswers[i] = info;
+                        newAnswers[i + 3] = 1;
                       }
                       return newAnswers;
                     });
@@ -180,16 +187,16 @@ const Deductions: React.FC<any> = ({
                       "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[20rem] transition-all shadow-md",
                       {
                         "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                          functionalConditionAnswers[i],
+                          deductionAnswers[i + 7],
                       }
                     )}
                     onClick={() => {
-                      setFunctionalConditionAnswers((prev) => {
+                      setDeductionAnswers((prev: any) => {
                         const newAnswers = [...prev];
-                        if (newAnswers[i]) {
-                          newAnswers[i] = "";
+                        if (newAnswers[i + 7]) {
+                          newAnswers[i + 7] = 0;
                         } else {
-                          newAnswers[i] = info;
+                          newAnswers[i + 7] = 1;
                         }
                         return newAnswers;
                       });
@@ -211,16 +218,16 @@ const Deductions: React.FC<any> = ({
                         "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[20rem] transition-all shadow-md",
                         {
                           "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                            functionalConditionAnswers[i + 9],
+                            deductionAnswers[i + 16],
                         }
                       )}
                       onClick={() => {
-                        setFunctionalConditionAnswers((prev) => {
+                        setDeductionAnswers((prev: any) => {
                           const newAnswers = [...prev];
-                          if (newAnswers[i + 9]) {
-                            newAnswers[i + 9] = "";
+                          if (newAnswers[i + 16]) {
+                            newAnswers[i + 16] = 0;
                           } else {
-                            newAnswers[i + 9] = info;
+                            newAnswers[i + 16] = 1;
                           }
                           return newAnswers;
                         });
@@ -261,16 +268,16 @@ const Deductions: React.FC<any> = ({
                     "border-2 bg-transparent hover:bg-gray-200 hover:shadow-none text-gray-800 rounded-lg px-5 py-3 w-[20rem] transition-all shadow-md",
                     {
                       "bg-amber-400 border-amber-400 hover:bg-amber-400":
-                        accessoriesAnswers[i],
+                        deductionAnswers[i + 24],
                     }
                   )}
                   onClick={() => {
-                    setAccessoriesAnswers((prev) => {
+                    setDeductionAnswers((prev: any) => {
                       const newAnswers = [...prev];
-                      if (newAnswers[i]) {
-                        newAnswers[i] = "";
+                      if (newAnswers[i + 24]) {
+                        newAnswers[i + 24] = 0;
                       } else {
-                        newAnswers[i] = info;
+                        newAnswers[i + 24] = 1;
                       }
                       return newAnswers;
                     });

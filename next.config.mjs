@@ -1,8 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   images: {
-    domains: ["cdn.brandfetch.io"], // Add the external domain here
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.brandfetch.io",
+        port: "",
+        pathname: "/**", // Allow all paths under the hostname
+      },
+      {
+        protocol: "https",
+        hostname: "i.gadgets360cdn.com",
+        port: "",
+        pathname: "/**", // Allow all paths under the hostname
+      },
+    ],
   },
 };
 
