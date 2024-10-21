@@ -1,17 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChooseBrand from "./sellPhoneComponents/ChooseBrand";
 import MoreBrands from "./sellPhoneComponents/MoreBrands";
 import ChooseModel from "./sellPhoneComponents/ChooseModel";
 import ChooseVariant from "./sellPhoneComponents/ChooseVariant";
 import Deductions from "./sellPhoneComponents/Deductions";
 import FinalPrice from "./sellPhoneComponents/FinalPrice";
+import { getBrands } from "@/utils/fetchData";
 
 const SellPhone: React.FC = () => {
   const [moreBrands, setMoreBrands] = useState(false);
   const [selectBrand, setSelectBrand] = useState("");
-  const [selectSeries, setSelectSeries] = useState("");
   const [exactValueButtonClicked, setExactValueButtonClicked] = useState(false);
   const [selectVariant, setSelectVariant] = useState("");
 
@@ -20,20 +20,30 @@ const SellPhone: React.FC = () => {
 
   const [selectModels, setSelectModels] = useState("");
 
+  // All brands
+  const [brands, SetBrands] = useState([]);
+
+  const getAllBrands = async () => {
+    const data = await getBrands();
+    SetBrands(data);
+  };
+
+  useEffect(() => {
+    getAllBrands();
+  }, []);
+
   return (
     <div className="py-8 border-b w-full">
-      {!moreBrands && !selectBrand && !selectSeries ? (
+      {!moreBrands && !selectBrand ? (
         <ChooseBrand
+          brands={brands}
           setMoreBrands={setMoreBrands}
           setSelectBrand={setSelectBrand}
         />
       ) : (
         moreBrands &&
         !selectBrand && (
-          <MoreBrands
-            setMoreBrands={setMoreBrands}
-            setSelectBrand={setSelectBrand}
-          />
+          <MoreBrands brands={brands} setSelectBrand={setSelectBrand} />
         )
       )}
 
@@ -41,8 +51,6 @@ const SellPhone: React.FC = () => {
         <ChooseModel
           setSelectModels={setSelectModels}
           selectBrand={selectBrand}
-          selectSeries={selectSeries}
-          setSelectSeries={setSelectSeries}
         />
       )}
 

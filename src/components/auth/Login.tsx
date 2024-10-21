@@ -6,8 +6,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { registerUser, sendOTP, verifyOTP } from "@/utils/user.auth";
 import SpinLoader from "../SpinLoader";
+import { useRouter } from "next/navigation";
 
 const AuthModal: React.FC<any> = ({ text }) => {
+  const [open, setOpen] = useState(false);
+
   const [step, setStep] = useState(1); // Step 1 for Phone Input, Step 2 for OTP Input
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -24,8 +27,10 @@ const AuthModal: React.FC<any> = ({ text }) => {
 
   const [isChecked, setIsChecked] = useState(false); // State for checkbox
   const [loading, setLoading] = useState(false);
-  const [userRegistered, setUserRegistered] = useState(false);
 
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  const router = useRouter();
   const handlePhoneSubmit = async () => {
     if (!isChecked) {
       alert("Please agree to the terms and conditions before proceeding.");
@@ -40,7 +45,7 @@ const AuthModal: React.FC<any> = ({ text }) => {
 
     if (success) {
       setLoading(false); // Logic to send OTP to the user's phone
-      setUserRegistered(userExists);
+
       if (!userExists) {
         setStep(3);
       } else {
@@ -67,6 +72,9 @@ const AuthModal: React.FC<any> = ({ text }) => {
     setLoading(false);
     if (success) {
       console.log(`OTP verified`);
+      setOpen(false);
+      setUserLoggedIn(true);
+      router.push("/");
     } else {
       alert(message || "OTP verification failed.");
     }
@@ -93,8 +101,10 @@ const AuthModal: React.FC<any> = ({ text }) => {
     setStep(2); // Proceed to OTP verification after registration
   };
 
-  return (
-    <Dialog.Root>
+  return userLoggedIn ? (
+    <div>Hello!</div>
+  ) : (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <Button className="bg-amber-300 text-black hover:bg-amber-400 w-16 sm:w-32 rounded-lg text-base">
           {text}

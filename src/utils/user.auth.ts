@@ -27,11 +27,11 @@ async function sendOTP(mobileNumber: string) {
     } else {
       const errorText = await response.text();
       console.error("Unexpected response type:", errorText);
-      throw new Error("Response is not JSON");
     }
   } catch (err) {
     console.error("Failed to send OTP:", err);
   }
+  return { success: false, userExists: "Admin does not exist" };
 }
 
 async function verifyOTP(mobileNumber: string, otp: string) {
