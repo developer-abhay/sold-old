@@ -1,6 +1,9 @@
 import { calculateBestPrice } from "@/utils/fetchUserData";
 import AuthModal from "../auth/Login";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { schedulePickup } from "@/utils/user.auth";
 
 const FinalPrice: React.FC<any> = ({
   selectPhone,
@@ -8,6 +11,11 @@ const FinalPrice: React.FC<any> = ({
   selectVariant,
 }) => {
   const [bestPrice, setBestPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState("");
+
+  // Context
+  const { isAuthenticated, role } = useAuth();
 
   const getBestPrice = async () => {
     console.log(selectPhone);
@@ -18,6 +26,18 @@ const FinalPrice: React.FC<any> = ({
       selectVariant._id
     );
     setBestPrice(data);
+  };
+
+  const sellPhone = async () => {
+    if (isAuthenticated && role == "user") {
+      setLoading(true);
+      const data = await schedulePickup(selectPhone._id, selectVariant._id);
+      console.log(data);
+      alert(data);
+      setLoading(false);
+    } else {
+      alert("Please Login first");
+    }
   };
 
   useEffect(() => {
@@ -46,7 +66,14 @@ const FinalPrice: React.FC<any> = ({
             ₹ {bestPrice}
           </h5>
 
-          <AuthModal text={"Sell"} />
+          {/* <AuthModal text={"Sell"} /> */}
+          <Button
+            className="bg-amber-300 text-black hover:bg-amber-400 w-16 sm:w-32 rounded-lg text-base"
+            onClick={sellPhone}
+          >
+            Sell
+          </Button>
+          {/* {error && <p className="text-md text-red-700">{error}</p>} */}
         </div>
       </div>
     </div>

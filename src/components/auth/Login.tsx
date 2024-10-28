@@ -6,7 +6,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { registerUser, sendOTP, verifyOTP } from "@/utils/user.auth";
 import SpinLoader from "../SpinLoader";
-import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
 
 const AuthModal: React.FC<any> = ({ text }) => {
   const [open, setOpen] = useState(false);
@@ -28,9 +29,9 @@ const AuthModal: React.FC<any> = ({ text }) => {
   const [isChecked, setIsChecked] = useState(false); // State for checkbox
   const [loading, setLoading] = useState(false);
 
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  // Context
+  const { isAuthenticated, setIsAuthenticated, role, setRole } = useAuth();
 
-  const router = useRouter();
   const handlePhoneSubmit = async () => {
     if (!isChecked) {
       alert("Please agree to the terms and conditions before proceeding.");
@@ -73,8 +74,8 @@ const AuthModal: React.FC<any> = ({ text }) => {
     if (success) {
       console.log(`OTP verified`);
       setOpen(false);
-      setUserLoggedIn(true);
-      router.push("/");
+      setIsAuthenticated(true);
+      setRole("user");
     } else {
       alert(message || "OTP verification failed.");
     }
@@ -101,7 +102,7 @@ const AuthModal: React.FC<any> = ({ text }) => {
     setStep(2); // Proceed to OTP verification after registration
   };
 
-  return userLoggedIn ? (
+  return isAuthenticated && role == "user" ? (
     <div>Hello! {name}</div>
   ) : (
     <Dialog.Root open={open} onOpenChange={setOpen}>

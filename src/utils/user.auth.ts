@@ -35,8 +35,9 @@ async function sendOTP(mobileNumber: string) {
 }
 
 async function verifyOTP(mobileNumber: string, otp: string) {
-  const config = {
+  const config: any = {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -111,4 +112,24 @@ async function registerUser(
   }
 }
 
-export { sendOTP, verifyOTP, registerUser };
+// Sell phone
+async function schedulePickup(phoneId: string, variantId: string) {
+  console.log(phoneId);
+  const config: any = {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ variantId }),
+  };
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/${phoneId}/pickup`,
+    config
+  );
+  const { message } = await response.json();
+  return message;
+}
+
+export { sendOTP, verifyOTP, registerUser, schedulePickup };
