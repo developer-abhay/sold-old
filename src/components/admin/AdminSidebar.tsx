@@ -10,24 +10,11 @@ const AdminSidebar = ({ route, setRoute }: any) => {
       </div>
       <nav className="flex-1 px-4 py-4">
         <ul className="space-y-4">
-          {/* <li>
-            <Button
-              className={cn(
-                "w-full uppercase",
-                route === "home" ? "bg-blue-900" : ""
-              )}
-              onClick={() => {
-                setRoute("home");
-              }}
-            >
-              Home
-            </Button>
-          </li> */}
           <li>
             <Button
               className={cn(
-                "w-full uppercase",
-                route === "phone" ? "bg-blue-900" : ""
+                "w-full uppercase hover:bg-blue-800",
+                route === "phone" ? "bg-blue-700" : ""
               )}
               onClick={() => {
                 setRoute("phone");
@@ -39,8 +26,8 @@ const AdminSidebar = ({ route, setRoute }: any) => {
           <li>
             <Button
               className={cn(
-                "w-full uppercase",
-                route === "deduction" ? "bg-blue-900" : ""
+                "w-full uppercase hover:bg-blue-800",
+                route === "deduction" ? "bg-blue-700" : ""
               )}
               onClick={() => {
                 setRoute("deduction");
@@ -52,8 +39,8 @@ const AdminSidebar = ({ route, setRoute }: any) => {
           <li>
             <Button
               className={cn(
-                "w-full uppercase",
-                route === "pickup" ? "bg-blue-900" : ""
+                "w-full uppercase hover:bg-blue-800",
+                route === "pickup" ? "bg-blue-700" : ""
               )}
               onClick={() => {
                 setRoute("pickup");

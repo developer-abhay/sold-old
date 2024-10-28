@@ -3,13 +3,15 @@ import AdminDeduction from "@/components/admin/AdminDeduction";
 import AdminPhone from "@/components/admin/AdminPhone";
 import AdminPickup from "@/components/admin/AdminPickup";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next//navigation";
 import { useState } from "react";
 
-const AdminDashboard = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
+const AdminDashboard = () => {
+  const { isAuthenticated, role } = useAuth();
   const [route, setRoute] = useState("phone");
 
-  return !isAuthenticated ? (
+  return !isAuthenticated || role != "admin" ? (
     redirect("/admin")
   ) : (
     <div className="flex h-screen w-screen pl-64">

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { sendAdminOTP, verifyAdminOTP } from "@/utils/admin.auth";
+import { useAuth } from "@/context/AuthContext";
 
-const AdminLogin = ({ setIsAuthenticated }: any) => {
+const AdminLogin = () => {
+  const { setIsAuthenticated, setRole } = useAuth();
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"input" | "verify">("input");
@@ -35,6 +37,7 @@ const AdminLogin = ({ setIsAuthenticated }: any) => {
       const response = await verifyAdminOTP(mobileNumber, otp);
       if (response.success) {
         setIsAuthenticated(true);
+        setRole("admin");
       } else {
         setError("Invalid OTP.");
       }

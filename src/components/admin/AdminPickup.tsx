@@ -1,4 +1,5 @@
 // PickupDashboard.tsx
+import { getAllPickups, updatePickupStatus } from "@/utils/fetchAdminData";
 import React, { useState, useEffect } from "react";
 // import { Pickup } from "../types"; // Import your types here
 // import { fetchPickups, updatePickupStatus } from "@/utils/fetchAdminData"; // Assumed utility functions
@@ -10,8 +11,8 @@ const PickupDashboard: React.FC = () => {
   const fetchAllPickups = async () => {
     setLoading(true);
     try {
-      // const data = await fetchPickups();
-      // setPickups(data);
+      const data = await getAllPickups();
+      setPickups(data);
     } catch (error) {
       console.error("Failed to fetch pickups:", error);
     } finally {
@@ -39,7 +40,6 @@ const PickupDashboard: React.FC = () => {
         </thead>
         <tbody>
           {pickups.map((pickup: any) => (
-            // <PickupRow key={pickup._id} pickup={pickup} />
             <PickupRow key={pickup._id} pickup={pickup} />
           ))}
         </tbody>
@@ -57,9 +57,10 @@ const PickupRow = ({ pickup }: any) => {
   const handleStatusUpdate = async () => {
     setUpdating(true);
     try {
-      const updatedStatus = status === "Pending" ? "Completed" : "Pending";
-      // const success = await updatePickupStatus(pickup._id, updatedStatus);
-      // if (success) setStatus(updatedStatus);
+      const updatedStatus = status === "Pending" ? "Scheduled" : "Completed";
+      const data = await updatePickupStatus(pickup._id, updatedStatus);
+      setStatus(updatedStatus);
+      console.log(data);
     } catch (error) {
       console.error("Error updating status:", error);
     } finally {
@@ -94,9 +95,18 @@ const PickupRow = ({ pickup }: any) => {
       <td className="px-4 py-2 border text-center">
         <button
           onClick={handleStatusUpdate}
-          disabled={updating}
+          style={{
+            backgroundColor: `${
+              updating || status == "Completed" ? "#6B7280" : ""
+            }`,
+          }}
+          disabled={updating || status == "Completed"}
           className={`px-4 py-2 text-white rounded ${
-            status === "Pending" ? "bg-yellow-500" : "bg-green-500"
+            status === "Pending"
+              ? "bg-yellow-500"
+              : status === "Scheduled"
+              ? "bg-green-500"
+              : "bg-gray-500"
           } ${
             updating ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-80"
           }`}
@@ -104,8 +114,8 @@ const PickupRow = ({ pickup }: any) => {
           {updating
             ? "Updating..."
             : status === "Pending"
-            ? "Mark Completed"
-            : "Mark Pending"}
+            ? "Mark Schedule"
+            : "Mark Completed"}
         </button>
       </td>
     </tr>

@@ -8,6 +8,7 @@ import ChooseVariant from "./sellPhoneComponents/ChooseVariant";
 import Deductions from "./sellPhoneComponents/Deductions";
 import FinalPrice from "./sellPhoneComponents/FinalPrice";
 import { getBrands } from "@/utils/fetchUserData";
+import { CircleCheck } from "lucide-react";
 
 const SellPhone: React.FC = () => {
   const [moreBrands, setMoreBrands] = useState(false);
@@ -15,6 +16,7 @@ const SellPhone: React.FC = () => {
   const [selectModel, setSelectModel] = useState("");
   const [selectVariant, setSelectVariant] = useState("");
   const [selectPhone, setSelectPhone] = useState("");
+  const [sellSuccessFull, setSellSuccessFull] = useState(false);
 
   const [exactValueButtonClicked, setExactValueButtonClicked] = useState(false);
 
@@ -83,12 +85,21 @@ const SellPhone: React.FC = () => {
         />
       )}
 
-      {accessoriesButtonClicked && (
+      {accessoriesButtonClicked && !sellSuccessFull && (
         <FinalPrice
           selectPhone={selectPhone}
           deductionAnswers={deductionAnswers}
           selectVariant={selectVariant}
+          setSellSuccessFull={setSellSuccessFull}
         />
+      )}
+      {sellSuccessFull && (
+        <div className="flex  w-full mx-auto max-w-7xl min-h-64 h-64  border-2 shadow-md rounded-lg py-3 px-3 md:px-0">
+          <h1 className="w-full h-full px-2 text-4xl font-bold flex justify-center items-center text-green-500">
+            Phone Sold Successfully
+            <CircleCheck className="ml-5 h-20 w-20" />
+          </h1>
+        </div>
       )}
     </div>
   );

@@ -70,4 +70,32 @@ const getAllPickups = async () => {
   return data.pickups;
 };
 
-export { fetchDeductions, updateDeductions };
+// Update pickup data
+const updatePickupStatus = async (id: string, newStatus: string) => {
+  const config: any = {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ newStatus }),
+  };
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${id}/pickup`,
+      config
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch brands");
+    }
+
+    const { message } = await response.json();
+    console.log(message);
+    return message;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { fetchDeductions, updateDeductions, getAllPickups, updatePickupStatus };

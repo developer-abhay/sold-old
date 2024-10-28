@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import AdminDashboard from "./dashboard";
 import AdminLogin from "./AdminLogin";
+import { useAuth } from "@/context/AuthContext";
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const { isAuthenticated, role } = useAuth();
 
-  return isAuthenticated ? (
-    <AdminDashboard isAuthenticated={isAuthenticated} />
+  return isAuthenticated && role == "admin" ? (
+    <AdminDashboard />
   ) : (
-    <AdminLogin setIsAuthenticated={setIsAuthenticated} />
+    <AdminLogin />
   );
 };
 

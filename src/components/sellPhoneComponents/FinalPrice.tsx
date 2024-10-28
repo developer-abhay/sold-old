@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { schedulePickup } from "@/utils/user.auth";
+import { redirect } from "next/navigation";
 
 const FinalPrice: React.FC<any> = ({
   selectPhone,
   deductionAnswers,
   selectVariant,
+  setSellSuccessFull,
 }) => {
   const [bestPrice, setBestPrice] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -32,8 +34,8 @@ const FinalPrice: React.FC<any> = ({
     if (isAuthenticated && role == "user") {
       setLoading(true);
       const data = await schedulePickup(selectPhone._id, selectVariant._id);
-      console.log(data);
-      alert(data);
+      setSellSuccessFull(true);
+      // alert(data);
       setLoading(false);
     } else {
       alert("Please Login first");
