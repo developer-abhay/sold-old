@@ -7,7 +7,7 @@ import ChooseModel from "./sellPhoneComponents/ChooseModel";
 import ChooseVariant from "./sellPhoneComponents/ChooseVariant";
 import Deductions from "./sellPhoneComponents/Deductions";
 import FinalPrice from "./sellPhoneComponents/FinalPrice";
-import { getBrands } from "@/utils/fetchData";
+import { getBrands } from "@/utils/fetchUserData";
 
 const SellPhone: React.FC = () => {
   const [moreBrands, setMoreBrands] = useState(false);

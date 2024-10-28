@@ -3,15 +3,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 const AdminSidebar = ({ route, setRoute }: any) => {
-  console.log(route);
   return (
-    <div className="w-64 h-screen bg-gray-800 text-white flex flex-col">
+    <div className="fixed left-0 top-0 w-64 h-screen bg-gray-800 text-white flex flex-col">
       <div className="flex items-center justify-center h-16 border-b border-gray-700">
         <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
       </div>
       <nav className="flex-1 px-4 py-4">
         <ul className="space-y-4">
-          <li>
+          {/* <li>
             <Button
               className={cn(
                 "w-full uppercase",
@@ -23,7 +22,7 @@ const AdminSidebar = ({ route, setRoute }: any) => {
             >
               Home
             </Button>
-          </li>
+          </li> */}
           <li>
             <Button
               className={cn(

@@ -29,8 +29,9 @@ export async function sendAdminOTP(mobileNumber: string) {
 }
 
 export async function verifyAdminOTP(mobileNumber: string, otp: string) {
-  const config = {
+  const config: any = {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

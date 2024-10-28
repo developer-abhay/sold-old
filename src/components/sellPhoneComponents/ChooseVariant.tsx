@@ -1,7 +1,7 @@
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { fetchPhoneById } from "@/utils/fetchData";
+import { fetchPhoneById } from "@/utils/fetchUserData";
 
 const ChooseVariant: React.FC<any> = ({
   selectModel,

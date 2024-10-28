@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getModels } from "@/utils/fetchData";
+import { getModels } from "@/utils/fetchUserData";
 
 const ChooseModel: React.FC<any> = ({ selectBrand, setSelectModel }) => {
   const [models, setModels] = useState([]);

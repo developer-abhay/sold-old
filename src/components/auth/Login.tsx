@@ -102,7 +102,7 @@ const AuthModal: React.FC<any> = ({ text }) => {
   };
 
   return userLoggedIn ? (
-    <div>Hello!</div>
+    <div>Hello! {name}</div>
   ) : (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>

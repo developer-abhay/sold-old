@@ -1,3 +1,17 @@
+// Get All phones
+async function getAllPhones(lastId: string) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch brands");
+  }
+
+  const { success, message, data } = await response.json();
+  return data.sellablePhones;
+}
+
 // Get all brand names
 async function getBrands() {
   const response = await fetch(
@@ -47,7 +61,6 @@ async function calculateBestPrice(
   deductionConditions: any,
   variantId = null
 ) {
-  console.log(deductionConditions);
   try {
     // Create the payload with the required conditions and variantId (if applicable)
     const payload: any = {
@@ -84,4 +97,10 @@ async function calculateBestPrice(
   }
 }
 
-export { getBrands, getModels, fetchPhoneById, calculateBestPrice };
+export {
+  getAllPhones,
+  getBrands,
+  getModels,
+  fetchPhoneById,
+  calculateBestPrice,
+};

@@ -1,31 +1,24 @@
 "use client";
 import AdminDeduction from "@/components/admin/AdminDeduction";
-import AdminHome from "@/components/admin/AdminHome";
 import AdminPhone from "@/components/admin/AdminPhone";
 import AdminPickup from "@/components/admin/AdminPickup";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next//navigation";
+import { useState } from "react";
 
-const AdminDashboard = () => {
-  const isAuthenticated = true;
-  const [route, setRoute] = useState("home");
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      redirect("/admin");
-    }
-  }, []);
+const AdminDashboard = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
+  const [route, setRoute] = useState("phone");
 
   return !isAuthenticated ? (
-    ""
+    redirect("/admin")
   ) : (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen pl-64">
       <AdminSidebar route={route} setRoute={setRoute} />
       <div className="p-5">
-        {route === "home" ? (
+        {/* {route === "home" ? (
           <AdminHome />
-        ) : route === "phone" ? (
+        )  */}
+        {route === "phone" ? (
           <AdminPhone />
         ) : route === "deduction" ? (
           <AdminDeduction />

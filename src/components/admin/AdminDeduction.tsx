@@ -1,66 +1,21 @@
-import { DEVICE_INFO } from "@/constants/deductions";
+import { fetchDeductions, updateDeductions } from "@/utils/fetchAdminData";
 import React, { useState, useEffect } from "react";
 
 const DeductionsComponent = () => {
-  const [deductions, setDeductions] = useState(DEVICE_INFO);
-  const [updatedDeductions, setUpdatedDeductions] = useState<any>({});
+  const [allDeductions, setAllDeductions] = useState([]);
 
   // Fetch the deductions data from the backend
-  useEffect(() => {
-    const fetchDeductions = async () => {
-      try {
-        const response = await fetch("/api/deductions");
-        const data = await response.json();
-        setDeductions(data);
+  const getDeductionQuestions = async () => {
+    console.log("hrebjnvj");
+    const data = await fetchDeductions();
+    setAllDeductions(data);
+  };
 
-        // Set initial updatedDeductions object
-        const initialDeductions: any = {};
-        data.forEach((deduction: any) => {
-          initialDeductions[deduction._id] = deduction.deductionPercentage;
-        });
-        setUpdatedDeductions(initialDeductions);
-      } catch (error) {
-        console.error("Error fetching deductions:", error);
-      }
-    };
-    fetchDeductions();
+  useEffect(() => {
+    getDeductionQuestions();
   }, []);
 
-  // Handle deduction percentage change for each question
-  const handlePercentageChange = (id: any, value: any) => {
-    setUpdatedDeductions({
-      ...updatedDeductions,
-      [id]: value,
-    });
-  };
-
-  // Submit the updated percentages to the backend
-  const handleSubmit = async () => {
-    const updatedData = deductions.map((deduction: any) => ({
-      ...deduction,
-      deductionPercentage: updatedDeductions[deduction._id],
-    }));
-
-    try {
-      const response = await fetch("/api/updateDeductions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (response.ok) {
-        alert("Deductions updated successfully!");
-      } else {
-        console.error("Error updating deductions");
-      }
-    } catch (error) {
-      console.error("Error updating deductions:", error);
-    }
-  };
-
-  if (deductions.length === 0) return <div>Loading...</div>;
+  if (allDeductions.length === 0) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -75,35 +30,62 @@ const DeductionsComponent = () => {
           </tr>
         </thead>
         <tbody>
-          {deductions.map((deduction: any) => (
-            <tr key={deduction._id}>
-              <td className="px-4 py-2 border">{deduction.message}</td>
-              <td className="px-4 py-2 border">
-                {deduction.favourableValue ? "Yes" : "No"}
-              </td>
-              <td className="px-4 py-2 border">
-                <input
-                  type="number"
-                  value={updatedDeductions[deduction._id]}
-                  onChange={(e) =>
-                    handlePercentageChange(deduction._id, e.target.value)
-                  }
-                  className="border px-2 py-1 w-20"
-                />
-              </td>
-            </tr>
-          ))}
+          {allDeductions.map((deduction: any, index) => {
+            return (
+              <UpdateDeductionComp
+                key={index}
+                deduction={deduction}
+                allDeductions={allDeductions}
+              />
+            );
+          })}
         </tbody>
       </table>
-
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-500 text-white px-4 py-2 mt-4 rounded"
-      >
-        Update Deductions
-      </button>
     </div>
   );
 };
 
 export default DeductionsComponent;
+
+//
+// Individual deduction Values and update logic
+//
+const UpdateDeductionComp = ({ deduction }: any) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [value, setValue] = useState<number>(deduction.deductionPercentage);
+
+  // Submit the updated percentages to the backend
+  const handleSubmit = async (id: string, value: number) => {
+    setLoading(true);
+    const success = await updateDeductions(id, value);
+
+    if (success) {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <tr>
+      <td className="px-4 py-2 border">{deduction.message}</td>
+      <td className="px-4 py-2 border">
+        {deduction.favourableValue ? "Yes" : "No"}
+      </td>
+      <td className="px-4 py-2 border">
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => setValue(Number(e.target.value))}
+          className="border px-2 py-1 w-20"
+        />
+        <button
+          disabled={loading}
+          style={{ backgroundColor: loading ? "#1E3A8A" : "" }}
+          onClick={() => handleSubmit(deduction._id, value)}
+          className="bg-blue-500 text-white px-3 py-2 ml-2 w-20 rounded hover:bg-blue-700"
+        >
+          {loading ? "..." : "Update"}
+        </button>
+      </td>
+    </tr>
+  );
+};

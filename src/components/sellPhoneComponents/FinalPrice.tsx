@@ -1,4 +1,4 @@
-import { calculateBestPrice } from "@/utils/fetchData";
+import { calculateBestPrice } from "@/utils/fetchUserData";
 import AuthModal from "../auth/Login";
 import { useEffect, useState } from "react";
 

@@ -1,52 +1,16 @@
 "use client";
-
-import { BRANDS } from "@/constants/brands";
+import { getAllPhones } from "@/utils/fetchUserData";
 import { useState, useEffect } from "react";
 
-// Phone object structure
-interface Phone {
-  name: string;
-  image: string;
-  series: {
-    name: string;
-    models: {
-      name: string;
-      variants: string[];
-      img: string;
-    }[];
-  }[];
-}
-
 const Phones = () => {
-  // const [phones, setPhones] = useState<Phone[]>([]);
-  const [phones, setPhones] = useState(BRANDS);
-  const [newPhone, setNewPhone] = useState<Phone>({
-    name: "",
-    image: "",
-    series: [
-      {
-        name: "",
-        models: [
-          {
-            name: "",
-            variants: [""],
-            img: "",
-          },
-        ],
-      },
-    ],
-  });
+  const [phones, setPhones] = useState([]);
+  const [newPhone, setNewPhone] = useState<any>([]);
   const [showForm, setShowForm] = useState(false);
 
   // Fetch phones from backend
   const fetchPhones = async () => {
-    try {
-      const response = await fetch("/api/admin/phones");
-      const data = await response.json();
-      setPhones(data); // assuming your backend sends the list of phones
-    } catch (error) {
-      console.error("Error fetching phones:", error);
-    }
+    const data = await getAllPhones(""); // empty "" means fetch all phone
+    setPhones(data);
   };
 
   useEffect(() => {
@@ -108,10 +72,10 @@ const Phones = () => {
             <input
               type="text"
               className="border p-2 w-full"
-              value={newPhone.name}
-              onChange={(e) =>
-                setNewPhone({ ...newPhone, name: e.target.value })
-              }
+              // value={newPhone?.name}
+              // onChange={(e) =>
+              // setNewPhone({ ...newPhone, name: e.target.value })
+              // }x
               required
             />
           </div>
@@ -121,15 +85,15 @@ const Phones = () => {
             <input
               type="text"
               className="border p-2 w-full"
-              value={newPhone.image}
-              onChange={(e) =>
-                setNewPhone({ ...newPhone, image: e.target.value })
-              }
+              // value={newPhone.image}
+              // onChange={(e) =>
+              // setNewPhone({ ...newPhone, image: e.target.value })
+              // }
               required
             />
           </div>
 
-          {/* Add other fields as necessary for models, variants, etc. */}
+          {/* Add other fields as necessary for models, variants, etc.*/}
 
           <button
             type="submit"
@@ -146,32 +110,18 @@ const Phones = () => {
           <tr>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Image</th>
-            <th className="py-2 px-4 border-b">Series</th>
             <th className="py-2 px-4 border-b">Models</th>
+            <th className="py-2 px-4 border-b">Variants</th>
           </tr>
         </thead>
         <tbody>
-          {phones.map((phone, index) => (
+          {phones.map((phone: any, index) => (
             <tr key={index} className="border-t">
               <td className="py-2 px-4">{phone.name}</td>
               <td className="py-2 px-4">
-                <img src={phone.image} alt={phone.name} width={50} />
+                <img src={phone.thumbnail} alt={phone.brand} width={50} />
               </td>
-              <td className="py-2 px-4">
-                {phone?.series?.map((series, i) => (
-                  <div key={i}>
-                    <strong>{series.name}</strong>
-                    <ul>
-                      {series.models.map((model, j) => (
-                        <li key={j}>
-                          {model.name} ({model.variants.join(", ")})
-                          <img src={model.img} alt={model.name} width={50} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </td>
+              <td>{phone.model}</td>
             </tr>
           ))}
         </tbody>
