@@ -24,8 +24,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [role, setRole] = useState<"user" | "admin" | null>("user"); // Initialize role
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState<"user" | "admin" | null>(null); // Initialize role
 
   return (
     <AuthContext.Provider

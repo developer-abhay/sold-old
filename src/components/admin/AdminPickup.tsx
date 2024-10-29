@@ -57,7 +57,7 @@ const PickupRow = ({ pickup }: any) => {
   const handleStatusUpdate = async () => {
     setUpdating(true);
     try {
-      const updatedStatus = status === "Pending" ? "Scheduled" : "Completed";
+      const updatedStatus = "Completed";
       const data = await updatePickupStatus(pickup._id, updatedStatus);
       setStatus(updatedStatus);
       console.log(data);
@@ -70,13 +70,16 @@ const PickupRow = ({ pickup }: any) => {
 
   return (
     <tr>
-      <td className="px-4 py-2 border">
-        <div>
+      <td className="px-4 py-2 border w-[200px]">
+        <div className="w-[200px]">
           <strong>{pickup.user.name}</strong>
-          <div>{pickup.user.email}</div>
           <div>{pickup.user.mobileNumber}</div>
+          <div>{pickup.user.email}</div>
           <div>
-            {pickup.user.address.city}, {pickup.user.address.state}
+            {pickup.user.address.blockOrStreet} , {pickup.user.address.city}{" "}
+          </div>
+          <div>
+            {pickup.user.address.state} - {pickup.user.address.pincode}
           </div>
         </div>
       </td>
@@ -85,28 +88,22 @@ const PickupRow = ({ pickup }: any) => {
           <strong>{pickup.phone.name}</strong> ({pickup.phone.model})
           <div>Brand: {pickup.phone.brand}</div>
           {pickup.phone.variantPrices?.length ? (
-            <div>Price: ₹{pickup.phone.variantPrices[0].basePrice}</div>
+            <div>Variant Price: ₹{pickup.phone.variantPrices[0].basePrice}</div>
           ) : (
-            <div>Price: ₹{pickup.phone.basePrice}</div>
+            <div>Base Price: ₹{pickup.phone.basePrice}</div>
           )}
         </div>
       </td>
-      <td className="px-4 py-2 border text-center">{status}</td>
+      <td className="px-4 py-2 border text-center w-40">{status}</td>
       <td className="px-4 py-2 border text-center">
         <button
           onClick={handleStatusUpdate}
           style={{
-            backgroundColor: `${
-              updating || status == "Completed" ? "#6B7280" : ""
-            }`,
+            backgroundColor: `${status == "Completed" ? "#22C55E" : ""}`,
           }}
           disabled={updating || status == "Completed"}
-          className={`px-4 py-2 text-white rounded ${
-            status === "Pending"
-              ? "bg-yellow-500"
-              : status === "Scheduled"
-              ? "bg-green-500"
-              : "bg-gray-500"
+          className={`px-4 py-2 text-white rounded w-40 ${
+            status === "Pending" ? "bg-yellow-500" : "bg-green-500"
           } ${
             updating ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-80"
           }`}
@@ -114,8 +111,8 @@ const PickupRow = ({ pickup }: any) => {
           {updating
             ? "Updating..."
             : status === "Pending"
-            ? "Mark Schedule"
-            : "Mark Completed"}
+            ? "Mark Completed"
+            : "Completed"}
         </button>
       </td>
     </tr>

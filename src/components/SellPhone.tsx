@@ -96,7 +96,7 @@ const SellPhone: React.FC = () => {
       {sellSuccessFull && (
         <div className="flex  w-full mx-auto max-w-7xl min-h-64 h-64  border-2 shadow-md rounded-lg py-3 px-3 md:px-0">
           <h1 className="w-full h-full px-2 text-4xl font-bold flex justify-center items-center text-green-500">
-            Phone Sold Successfully
+            Pick Up Scheduled
             <CircleCheck className="ml-5 h-20 w-20" />
           </h1>
         </div>

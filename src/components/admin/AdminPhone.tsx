@@ -5,6 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import SpinLoader from "../SpinLoader";
+import { addNewPhone, scrapeDataForPhone } from "@/utils/fetchAdminData";
 
 const Phones = () => {
   const [phones, setPhones] = useState([]);
@@ -58,7 +59,7 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
   const [model, setModel] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [images, setImages] = useState<string[]>([]);
-  const [variantPrices, setVariantPrices] = useState<
+  const [variants, setVariants] = useState<
     { variantName: string; basePrice: number }[]
   >([]);
   const [basePrice, setBasePrice] = useState<number | null>(null);
@@ -68,26 +69,18 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
 
   const handleLinkSubmit = async () => {
     setLoading(true);
-    try {
-      const response = await fetch("/api/fetchPhoneDetails", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ link }),
-      });
-      const data = await response.json();
+    const data = await scrapeDataForPhone(link);
+    console.log(data);
 
-      setName(data.name || "");
-      setBrand(data.brand || "");
-      setModel(data.model || "");
-      setThumbnail(data.thumbnail || "");
-      setImages(data.images || []);
-      setVariantPrices(data.variantPrices || []);
-      setBasePrice(data.basePrice || null);
-    } catch (error) {
-      alert("Failed to fetch phone details. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setBrand(data.brand || "");
+    setModel(data.model || "");
+    setName(data.name || "");
+    setThumbnail(data.thumbnail || "");
+    setImages(data.images || []);
+    setVariants(data.variants || []);
+    setBasePrice(data.basePrice || null);
+
+    setLoading(false);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -95,40 +88,29 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
 
     // Check if either basePrice or variantPrices is provided, but not both
     if (
-      (basePrice !== null && variantPrices.length > 0) ||
-      (basePrice === null && variantPrices.length === 0)
+      (basePrice !== null && variants.length > 0) ||
+      (basePrice === null && variants.length === 0)
     ) {
       alert("Please provide either a base price or variant prices, not both.");
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await fetch("/sellable-phone/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          brand,
-          model,
-          thumbnail,
-          images,
-          variantPrices: variantPrices.length > 0 ? variantPrices : undefined,
-          basePrice: basePrice !== null ? basePrice : undefined,
-        }),
-      });
 
-      if (response.status === 201) {
-        alert("Phone added successfully!");
-        setOpen(false); // Close modal on success
-      } else {
-        alert("Failed to add phone. Please try again.");
-      }
-    } catch (error) {
-      alert("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    const details = {
+      name,
+      brand,
+      model,
+      thumbnail,
+      images,
+      variantPrices: variants.length > 0 ? variants : undefined,
+      basePrice: basePrice !== null ? basePrice : undefined,
+    };
+
+    const data = await addNewPhone(details);
+
+    setOpen(false); // Close modal on success
+    setLoading(false);
   };
 
   return (
@@ -203,7 +185,7 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
               />
               <div className="space-y-2">
                 <label>Variant Prices (optional)</label>
-                {variantPrices.map((variant, index) => (
+                {/* {variantPrices.map((variant, index) => (
                   <div key={index} className="flex gap-2">
                     <input
                       type="text"
@@ -239,8 +221,8 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
                       Remove
                     </Button>
                   </div>
-                ))}
-                <Button
+                ))} */}
+                {/* <Button
                   onClick={() =>
                     setVariantPrices([
                       ...variantPrices,
@@ -249,7 +231,7 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
                   }
                 >
                   Add Variant
-                </Button>
+                </Button> */}
               </div>
               <input
                 type="number"

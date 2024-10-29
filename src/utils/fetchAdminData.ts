@@ -1,3 +1,51 @@
+// Add a new phone
+const scrapeDataForPhone = async (url: string) => {
+  const config: any = {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone/scrape?url=${url}`,
+    config
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch brands");
+  }
+
+  const { data, success, message } = await response.json();
+
+  return data.phoneDetails;
+};
+
+// Add a new phone
+const addNewPhone = async (details: any) => {
+  const config: any = {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(details),
+  };
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sellable-phone`,
+    config
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch brands");
+  }
+
+  // const { message } = await response.json();
+  const data = await response.json();
+
+  return data.phoneDetails;
+};
+
 // Get all deduction prices
 const fetchDeductions = async () => {
   const config: any = {
@@ -98,4 +146,11 @@ const updatePickupStatus = async (id: string, newStatus: string) => {
   }
 };
 
-export { fetchDeductions, updateDeductions, getAllPickups, updatePickupStatus };
+export {
+  scrapeDataForPhone,
+  addNewPhone,
+  fetchDeductions,
+  updateDeductions,
+  getAllPickups,
+  updatePickupStatus,
+};
