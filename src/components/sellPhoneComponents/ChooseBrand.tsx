@@ -32,7 +32,7 @@ const ChooseBrand: React.FC<any> = ({
                 >
                   <Image
                     onClick={() => setSelectBrand(item.brandName)}
-                    className="cursor-pointer hover:scale-[1.1] transition-all"
+                    className="cursor-pointer hover:scale-[1.1] transition-all border-2 border-gray-300 rounded-xl"
                     src={item.brandLogo}
                     alt={item.brandName}
                     width={96}

@@ -57,7 +57,7 @@ const PickupRow = ({ pickup }: any) => {
   const handleStatusUpdate = async () => {
     setUpdating(true);
     try {
-      const updatedStatus = "Completed";
+      const updatedStatus = status === "Pending" ? "Completed" : "Pending";
       const data = await updatePickupStatus(pickup._id, updatedStatus);
       setStatus(updatedStatus);
       console.log(data);
@@ -112,7 +112,7 @@ const PickupRow = ({ pickup }: any) => {
             ? "Updating..."
             : status === "Pending"
             ? "Mark Completed"
-            : "Completed"}
+            : "Mark Pending"}
         </button>
       </td>
     </tr>

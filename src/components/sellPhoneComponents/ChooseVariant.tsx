@@ -19,6 +19,10 @@ const ChooseVariant: React.FC<any> = ({
     setLoading(false);
     setAllVariants(data.variantPrices);
     setSelectPhone(data);
+
+    // Move on to next stage if selected model contains no variants
+    if(!data.variantPrices || data.variantPrices.length == 0) 
+      setExactValueButtonClicked(true);
   };
 
   useEffect(() => {

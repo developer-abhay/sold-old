@@ -130,7 +130,7 @@ const updatePickupStatus = async (id: string, newStatus: string) => {
   };
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${id}/pickup`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/pickup/${id}/status`,
       config
     );
 

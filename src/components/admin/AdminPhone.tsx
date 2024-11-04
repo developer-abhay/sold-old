@@ -12,7 +12,7 @@ const Phones = () => {
 
   // Fetch phones from backend
   const fetchPhones = async () => {
-    const data = await getAllPhones(""); // empty "" means fetch all phone
+    const data = await getAllPhones(""); // empty "" means fetch all phones
     setPhones(data);
   };
 
@@ -30,7 +30,9 @@ const Phones = () => {
           <tr>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Image</th>
-            <th className="py-2 px-4 border-b">Models</th>
+            <th className="py-2 px-4 border-b">Brand</th>
+            <th className="py-2 px-4 border-b">Model</th>
+            <th className="py-2 px-4 border-b">Price</th>
             <th className="py-2 px-4 border-b">Variants</th>
           </tr>
         </thead>
@@ -41,7 +43,31 @@ const Phones = () => {
               <td className="py-2 px-4">
                 <img src={phone.thumbnail} alt={phone.brand} width={50} />
               </td>
-              <td>{phone.model}</td>
+              <td className="py-2 px-4">{phone.brand}</td>
+              <td className="py-2 px-4">{phone.model}</td>
+              <td className="py-2 px-4">
+                {phone.basePrice ? (
+                  <span>{`₹${phone.basePrice}`}</span>
+                ) : (
+                  "N/A"
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {phone.variantPrices && phone.variantPrices.length > 0 ? (
+                  <ul className="space-y-2">
+                    {phone.variantPrices.map((variant: any, vIndex: number) => (
+                      <li key={vIndex}>
+                        {variant.variantName}: ₹{variant.basePrice}
+                        {vIndex < phone.variantPrices.length - 1 && (
+                          <hr className="border-t border-gray-300 my-2" />
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span>No Variants</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -50,10 +76,10 @@ const Phones = () => {
   );
 };
 
+
 // Add new phone modal
 const AddPhoneModal: React.FC<any> = ({ text }) => {
   const [open, setOpen] = useState(false);
-
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
@@ -63,60 +89,110 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
     { variantName: string; basePrice: number }[]
   >([]);
   const [basePrice, setBasePrice] = useState<number | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [link, setLink] = useState("");
 
   const handleLinkSubmit = async () => {
     setLoading(true);
-    const data = await scrapeDataForPhone(link);
-    console.log(data);
+    try {
+      const data = await scrapeDataForPhone(link);
+      console.log(data);
 
-    setBrand(data.brand || "");
-    setModel(data.model || "");
-    setName(data.name || "");
-    setThumbnail(data.thumbnail || "");
-    setImages(data.images || []);
-    setVariants(data.variants || []);
-    setBasePrice(data.basePrice || null);
+      setBrand(data.brand || "");
+      setModel(data.model || "");
+      setName(data.name || "");
+      setThumbnail(data.thumbnail || "");
+      setImages(data.images || []);
+      
+      // The scrape route returns only variant names in variants array
+      if(!data.variants)
+        data.variants = []
+      setVariants(data.variants.map((variant: any) => {
+        return {
+          variantName: variant,
+          basPrice: undefined
+        };
+      }));
 
-    setLoading(false);
+      setBasePrice(data.basePrice || null);
+    } catch (error) {
+      console.error("Failed to fetch phone details:", error);
+      alert("Error fetching phone details. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if either basePrice or variantPrices is provided, but not both
-    if (
-      (basePrice !== null && variants.length > 0) ||
-      (basePrice === null && variants.length === 0)
-    ) {
+    // Validate required fields
+    if (!name || !brand || !model || !thumbnail) {
+      alert("Please fill in all required fields: Name, Brand, Model, and Thumbnail.");
+      return;
+    }
+
+    // Check if either basePrice or variants is provided, but not both
+    if ((basePrice !== null && variants.length > 0) ||
+      (basePrice === null && variants.length === 0)) {
       alert("Please provide either a base price or variant prices, not both.");
       return;
     }
 
+    // Validate that variants have both variantName and basePrice
+    for (const variant of variants) {
+      if (!variant.variantName || !variant.basePrice) {
+        alert("Each variant must have both a name and a base price.");
+        return;
+      }
+    }
+
+
     setLoading(true);
+    try {
+      const details = {
+        name,
+        brand,
+        model,
+        thumbnail,
+        images,
+        variantPrices: variants.length > 0 ? variants : undefined,
+        basePrice: basePrice !== null ? basePrice : undefined,
+      };
 
-    const details = {
-      name,
-      brand,
-      model,
-      thumbnail,
-      images,
-      variantPrices: variants.length > 0 ? variants : undefined,
-      basePrice: basePrice !== null ? basePrice : undefined,
-    };
+      const data = await addNewPhone(details);
+      alert("Phone added successfully!");
+      setOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Failed to add phone:", error);
+      alert("Error adding phone. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const data = await addNewPhone(details);
+  const handleAddVariant = () => {
+    setVariants([...variants, { variantName: "", basePrice: 0 }]);
+  };
 
-    setOpen(false); // Close modal on success
-    setLoading(false);
+  const handleRemoveVariant = (index: number) => {
+    setVariants(variants.filter((_, i) => i !== index));
+  };
+
+  const handleVariantChange = (index: number, field: string, value: string | number) => {
+    const updatedVariants = [...variants];
+    if (field === "variantName") {
+      updatedVariants[index].variantName = value as string;
+    } else if (field === "basePrice") {
+      updatedVariants[index].basePrice = Number(value);
+    }
+    setVariants(updatedVariants);
   };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button className="bg-blue-500  hover:bg-blue-600 w-16 sm:w-32 rounded-lg text-base text-white">
+        <Button className="bg-blue-500 hover:bg-blue-600 w-16 sm:w-32 rounded-lg text-base text-white">
           Add Phone
         </Button>
       </Dialog.Trigger>
@@ -185,72 +261,46 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
               />
               <div className="space-y-2">
                 <label>Variant Prices (optional)</label>
-                {/* {variantPrices.map((variant, index) => (
+                {variants.map((variant, index) => (
                   <div key={index} className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Variant Name"
                       value={variant.variantName}
-                      onChange={(e) => {
-                        const updatedVariants = [...variantPrices];
-                        updatedVariants[index].variantName = e.target.value;
-                        setVariantPrices(updatedVariants);
-                      }}
+                      onChange={(e) => handleVariantChange(index, "variantName", e.target.value)}
                       className="border border-gray-300 p-2 rounded-lg w-1/2"
                     />
                     <input
                       type="number"
                       placeholder="Price"
                       value={variant.basePrice}
-                      onChange={(e) => {
-                        const updatedVariants = [...variantPrices];
-                        updatedVariants[index].basePrice = parseFloat(
-                          e.target.value
-                        );
-                        setVariantPrices(updatedVariants);
-                      }}
+                      onChange={(e) => handleVariantChange(index, "basePrice", e.target.value)}
                       className="border border-gray-300 p-2 rounded-lg w-1/2"
                     />
                     <Button
-                      onClick={() =>
-                        setVariantPrices((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        )
-                      }
+                      type="button" // Prevents form submission
+                      onClick={() => handleRemoveVariant(index)}
+                      className="bg-red-500 text-white p-2 rounded-lg"
                     >
                       Remove
                     </Button>
                   </div>
-                ))} */}
-                {/* <Button
-                  onClick={() =>
-                    setVariantPrices([
-                      ...variantPrices,
-                      { variantName: "", basePrice: 0 },
-                    ])
-                  }
-                >
+                ))}
+                <Button onClick={handleAddVariant} className="bg-green-500 text-white p-2 rounded-lg">
                   Add Variant
-                </Button> */}
+                </Button>
               </div>
               <input
                 type="number"
                 placeholder="Base Price (if no variants)"
                 value={basePrice || ""}
-                onChange={(e) =>
-                  setBasePrice(
-                    e.target.value ? parseFloat(e.target.value) : null
-                  )
-                }
+                onChange={(e) => setBasePrice(e.target.value ? parseFloat(e.target.value) : null)}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
 
               <button
                 type="submit"
-                className={cn(
-                  "text-white px-4 py-2 rounded-lg w-full text-center flex justify-center",
-                  "bg-blue-500"
-                )}
+                className="text-white px-4 py-2 rounded-lg w-full text-center flex justify-center bg-blue-500"
                 disabled={loading}
               >
                 {loading ? <SpinLoader /> : "Add Phone"}
@@ -262,5 +312,6 @@ const AddPhoneModal: React.FC<any> = ({ text }) => {
     </Dialog.Root>
   );
 };
+
 
 export default Phones;
