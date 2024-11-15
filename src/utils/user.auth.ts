@@ -4,7 +4,7 @@ async function sendOTP(mobileNumber: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ mobileNumber: `+91${mobileNumber}` }),
+    body: JSON.stringify({ mobileNumber: `${mobileNumber}` }),
   };
   try {
     const response = await fetch(
@@ -41,7 +41,7 @@ async function verifyOTP(mobileNumber: string, otp: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ mobileNumber: `+91${mobileNumber}`, otp }),
+    body: JSON.stringify({ mobileNumber: `${mobileNumber}`, otp }),
   };
 
   const response = await fetch(

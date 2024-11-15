@@ -142,7 +142,7 @@ const AuthModal: React.FC<any> = ({ text }) => {
             >
               {step === 1 ? (
                 <div className="flex items-center border border-gray-300 p-2 rounded-lg">
-                  <span className="text-gray-500 mr-2">+91</span>
+                  <span className="text-gray-500 mr-2"></span>
                   <input
                     type="text"
                     placeholder="Phone Number"

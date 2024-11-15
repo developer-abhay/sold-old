@@ -4,7 +4,7 @@ export async function sendAdminOTP(mobileNumber: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ mobileNumber: `+91${mobileNumber}` }),
+    body: JSON.stringify({ mobileNumber: `${mobileNumber}` }),
   };
 
   try {
@@ -35,7 +35,7 @@ export async function verifyAdminOTP(mobileNumber: string, otp: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ mobileNumber: `+91${mobileNumber}`, otp }),
+    body: JSON.stringify({ mobileNumber: `${mobileNumber}`, otp }),
     //   credentials: "include", // To ensure cookies (JWT) are handled automatically
   };
 
